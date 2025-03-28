@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>GLB表示テスト</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body { margin: 0; padding: 0; background: black; overflow: hidden; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/GLTFLoader.js"></script>
+  <script>
+    let scene, camera, renderer, model;
+    init(); animate();
+    function init() {
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.z = 2;
+      renderer = new THREE.WebGLRenderer({ alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+      const light = new THREE.DirectionalLight(0xffffff, 1);
+      light.position.set(0, 1, 1).normalize();
+      scene.add(light);
+      const loader = new THREE.GLTFLoader();
+      loader.load('./public/arrow_fixed.glb', gltf => {
+        model = gltf.scene;
+        model.scale.set(1, 1, 1);
+        scene.add(model);
+      }, undefined, err => console.error('GLB読み込みエラー:', err));
+    }
+    function animate() {
+      requestAnimationFrame(animate);
+      if (model) model.rotation.y += 0.01;
+      renderer.render(scene, camera);
+    }
+  </script>
+</body>
+</html>
